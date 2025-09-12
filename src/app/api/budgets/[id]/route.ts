@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { initializeDatabase } from '@/lib/database';
-import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
+import { Budget } from '@/lib/entities/Budget';
+import { ExpenseCategory } from '@/lib/entities/Expense';
 import { z } from 'zod';
 
-const updateExpenseSchema = z.object({
-  title: z.string().min(1, 'Title is required').optional(),
-  description: z.string().optional(),
+const updateBudgetSchema = z.object({
   amount: z.number().positive('Amount must be positive').optional(),
-  category: z.nativeEnum(ExpenseCategory).optional(),
-  date: z.string().transform((str) => new Date(str)).optional(),
+  description: z.string().optional(),
 });
 
 export async function GET(
@@ -24,19 +22,19 @@ export async function GET(
 
     const { id } = await params;
     const dataSource = await initializeDatabase();
-    const expenseRepository = dataSource.getRepository(Expense);
+    const budgetRepository = dataSource.getRepository(Budget);
 
-    const expense = await expenseRepository.findOne({
+    const budget = await budgetRepository.findOne({
       where: { id, userId },
     });
 
-    if (!expense) {
-      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+    if (!budget) {
+      return NextResponse.json({ error: 'Budget not found' }, { status: 404 });
     }
 
-    return NextResponse.json(expense);
+    return NextResponse.json(budget);
   } catch (error) {
-    console.error('Error fetching expense:', error);
+    console.error('Error fetching budget:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -53,28 +51,28 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const validatedData = updateExpenseSchema.parse(body);
+    const validatedData = updateBudgetSchema.parse(body);
 
     const dataSource = await initializeDatabase();
-    const expenseRepository = dataSource.getRepository(Expense);
+    const budgetRepository = dataSource.getRepository(Budget);
 
-    const expense = await expenseRepository.findOne({
+    const budget = await budgetRepository.findOne({
       where: { id, userId },
     });
 
-    if (!expense) {
-      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+    if (!budget) {
+      return NextResponse.json({ error: 'Budget not found' }, { status: 404 });
     }
 
-    Object.assign(expense, validatedData);
-    const updatedExpense = await expenseRepository.save(expense);
+    Object.assign(budget, validatedData);
+    const updatedBudget = await budgetRepository.save(budget);
 
-    return NextResponse.json(updatedExpense);
+    return NextResponse.json(updatedBudget);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    console.error('Error updating expense:', error);
+    console.error('Error updating budget:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -91,21 +89,21 @@ export async function DELETE(
 
     const { id } = await params;
     const dataSource = await initializeDatabase();
-    const expenseRepository = dataSource.getRepository(Expense);
+    const budgetRepository = dataSource.getRepository(Budget);
 
-    const expense = await expenseRepository.findOne({
+    const budget = await budgetRepository.findOne({
       where: { id, userId },
     });
 
-    if (!expense) {
-      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+    if (!budget) {
+      return NextResponse.json({ error: 'Budget not found' }, { status: 404 });
     }
 
-    await expenseRepository.remove(expense);
+    await budgetRepository.remove(budget);
 
-    return NextResponse.json({ message: 'Expense deleted successfully' });
+    return NextResponse.json({ message: 'Budget deleted successfully' });
   } catch (error) {
-    console.error('Error deleting expense:', error);
+    console.error('Error deleting budget:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

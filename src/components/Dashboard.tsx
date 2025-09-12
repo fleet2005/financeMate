@@ -9,6 +9,7 @@ import UploadReceiptModal from './UploadReceiptModal';
 import ExpenseList from './ExpenseList';
 import ExpenseSummary from './ExpenseSummary';
 import SuggestionsPanel from './SuggestionsPanel';
+import BudgetPanel from './BudgetPanel';
 
 interface Suggestion {
   type: 'savings' | 'warning' | 'tip' | 'info';
@@ -29,6 +30,7 @@ export default function Dashboard() {
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [filterByDate, setFilterByDate] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Set current date after component mounts to prevent hydration mismatch
   useEffect(() => {
@@ -90,18 +92,21 @@ export default function Dashboard() {
   const handleExpenseAdded = () => {
     fetchExpenses();
     fetchSuggestions();
+    setRefreshTrigger(prev => prev + 1); // Trigger budget refresh
     setShowAddModal(false);
   };
 
   const handleExpenseDeleted = () => {
     fetchExpenses();
     fetchSuggestions();
+    setRefreshTrigger(prev => prev + 1); // Trigger budget refresh
   };
 
   const handleReceiptCreated = () => {
     // Always refetch from DB to ensure UI matches server
     fetchExpenses();
     fetchSuggestions();
+    setRefreshTrigger(prev => prev + 1); // Trigger budget refresh
     setShowUploadModal(false);
   };
 
@@ -264,6 +269,12 @@ export default function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            <BudgetPanel 
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+              filterByDate={filterByDate}
+              refreshTrigger={refreshTrigger}
+            />
             <ExpenseSummary expenses={expenses} />
             <SuggestionsPanel suggestions={suggestions} />
           </div>
