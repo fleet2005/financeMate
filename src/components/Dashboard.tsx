@@ -5,6 +5,7 @@ import { UserButton } from '@clerk/nextjs';
 import { Plus, TrendingUp, DollarSign, Calendar, Filter } from 'lucide-react';
 import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
 import AddExpenseModal from './AddExpenseModal';
+import UploadReceiptModal from './UploadReceiptModal';
 import ExpenseList from './ExpenseList';
 import ExpenseSummary from './ExpenseSummary';
 import SuggestionsPanel from './SuggestionsPanel';
@@ -22,9 +23,11 @@ export default function Dashboard() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<number>(1);
   const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const [filterByDate, setFilterByDate] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
 
   // Set current date after component mounts to prevent hydration mismatch
@@ -39,8 +42,10 @@ export default function Dashboard() {
     try {
       const params = new URLSearchParams();
       if (selectedCategory !== 'all') params.append('category', selectedCategory);
-      params.append('month', selectedMonth.toString());
-      params.append('year', selectedYear.toString());
+      if (filterByDate) {
+        params.append('month', selectedMonth.toString());
+        params.append('year', selectedYear.toString());
+      }
 
       const response = await fetch(`/api/expenses?${params}`);
       if (response.ok) {
@@ -77,7 +82,7 @@ export default function Dashboard() {
       setLoading(false);
     };
     loadData();
-  }, [mounted, selectedCategory, selectedMonth, selectedYear]);
+  }, [mounted, selectedCategory, selectedMonth, selectedYear, filterByDate]);
 
   const handleExpenseAdded = () => {
     fetchExpenses();
@@ -88,6 +93,13 @@ export default function Dashboard() {
   const handleExpenseDeleted = () => {
     fetchExpenses();
     fetchSuggestions();
+  };
+
+  const handleReceiptCreated = () => {
+    // Always refetch from DB to ensure UI matches server
+    fetchExpenses();
+    fetchSuggestions();
+    setShowUploadModal(false);
   };
 
   const totalSpent = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
@@ -151,11 +163,11 @@ export default function Dashboard() {
         </div>
 
         {/* Filters and Add Button */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+        <div suppressHydrationWarning className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="flex items-center space-x-2">
               <Filter className="h-5 w-5 text-slate-400" />
-              <select
+              <select suppressHydrationWarning
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="bg-slate-800 border border-slate-600 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -169,9 +181,20 @@ export default function Dashboard() {
               </select>
             </div>
 
-            {mounted && (
+            {/* Date filter toggle */}
+            <label className="flex items-center space-x-2 text-sm text-slate-400">
+              <input
+                type="checkbox"
+                checked={filterByDate}
+                onChange={(e) => setFilterByDate(e.target.checked)}
+                className="h-4 w-4 accent-blue-600"
+              />
+              <span>Filter by month/year</span>
+            </label>
+
+            {mounted && filterByDate && (
               <div className="flex space-x-2">
-                <select
+                <select suppressHydrationWarning
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
                   className="bg-slate-800 border border-slate-600 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -183,7 +206,7 @@ export default function Dashboard() {
                   ))}
                 </select>
 
-                <select
+                <select suppressHydrationWarning
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
                   className="bg-slate-800 border border-slate-600 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -201,13 +224,22 @@ export default function Dashboard() {
             )}
           </div>
 
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Add Expense</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button suppressHydrationWarning
+              onClick={() => setShowUploadModal(true)}
+              className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors shadow-lg"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Scan Receipt</span>
+            </button>
+            <button suppressHydrationWarning
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Add Expense</span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -239,6 +271,14 @@ export default function Dashboard() {
         <AddExpenseModal
           onClose={() => setShowAddModal(false)}
           onExpenseAdded={handleExpenseAdded}
+        />
+      )}
+
+      {/* Upload Receipt Modal */}
+      {showUploadModal && (
+        <UploadReceiptModal
+          onClose={() => setShowUploadModal(false)}
+          onCreated={handleReceiptCreated}
         />
       )}
     </div>
