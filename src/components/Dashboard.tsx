@@ -60,8 +60,11 @@ export default function Dashboard() {
   const fetchSuggestions = async () => {
     try {
       const params = new URLSearchParams();
-      params.append('month', selectedMonth.toString());
-      params.append('year', selectedYear.toString());
+      // Only add date filters if date filtering is enabled
+      if (filterByDate) {
+        params.append('month', selectedMonth.toString());
+        params.append('year', selectedYear.toString());
+      }
 
       const response = await fetch(`/api/suggestions?${params}`);
       if (response.ok) {

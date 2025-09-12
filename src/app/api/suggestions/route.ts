@@ -12,20 +12,26 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const month = searchParams.get('month') || new Date().getMonth() + 1;
-    const year = searchParams.get('year') || new Date().getFullYear();
+    const month = searchParams.get('month');
+    const year = searchParams.get('year');
 
-    // Fetch user's expenses for the specified month
+    // Fetch user's expenses
     const dataSource = await initializeDatabase();
     const expenseRepository = dataSource.getRepository(Expense);
 
-    const expenses = await expenseRepository
+    let query = expenseRepository
       .createQueryBuilder('expense')
-      .where('expense.userId = :userId', { userId })
-      .andWhere(
+      .where('expense.userId = :userId', { userId });
+
+    // Only filter by date if month/year are provided
+    if (month && year) {
+      query = query.andWhere(
         'EXTRACT(MONTH FROM expense.date) = :month AND EXTRACT(YEAR FROM expense.date) = :year',
         { month: parseInt(month), year: parseInt(year) }
-      )
+      );
+    }
+
+    const expenses = await query
       .orderBy('expense.date', 'DESC')
       .getMany();
 
@@ -54,7 +60,7 @@ export async function GET(request: NextRequest) {
 
     // Generate AI suggestions using Gemini
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `
     Analyze this user's spending data and provide 3-5 practical savings suggestions:
