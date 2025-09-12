@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { Plus, TrendingUp, DollarSign, Calendar, Filter } from 'lucide-react';
+import { Plus, TrendingUp, DollarSign, Calendar, Filter, Download } from 'lucide-react';
 import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
 import AddExpenseModal from './AddExpenseModal';
 import UploadReceiptModal from './UploadReceiptModal';
@@ -10,6 +10,7 @@ import ExpenseList from './ExpenseList';
 import ExpenseSummary from './ExpenseSummary';
 import SuggestionsPanel from './SuggestionsPanel';
 import BudgetPanel from './BudgetPanel';
+import { generateExpensePDF, getPeriodString } from '@/lib/pdfGeneratorSimple';
 
 interface Suggestion {
   type: 'savings' | 'warning' | 'tip' | 'info';
@@ -112,6 +113,55 @@ export default function Dashboard() {
 
   const totalSpent = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
 
+  const handleDownloadPDF = async () => {
+    try {
+      console.log('Starting PDF generation...');
+      
+      // Fetch budget data for the current period
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear();
+      
+      const budgetParams = new URLSearchParams();
+      budgetParams.append('month', currentMonth.toString());
+      budgetParams.append('year', currentYear.toString());
+      
+      console.log('Fetching budget data...');
+      const budgetResponse = await fetch(`/api/budgets?${budgetParams}`);
+      let budgets = [];
+      
+      if (budgetResponse.ok) {
+        const budgetData = await budgetResponse.json();
+        budgets = budgetData.map((budget: any) => ({
+          category: budget.category,
+          budget: Number(budget.amount),
+          spent: budget.spent,
+          percentage: budget.percentage,
+          isOverBudget: budget.isOverBudget
+        }));
+        console.log('Budget data fetched:', budgets);
+      } else {
+        console.log('No budget data found');
+      }
+
+      // Generate PDF
+      const period = getPeriodString(selectedMonth, selectedYear, filterByDate);
+      console.log('Generating PDF with data:', { expenses: expenses.length, budgets: budgets.length, totalSpent, period });
+      
+      generateExpensePDF({
+        expenses,
+        budgets,
+        totalSpent,
+        period
+      });
+      
+      console.log('PDF generation completed');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert(`Failed to generate PDF: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header */}
@@ -122,6 +172,14 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-white">FinanceMate</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={handleDownloadPDF}
+                className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+                title="Download Expense Summary as PDF"
+              >
+                <Download className="h-4 w-4" />
+                <span>Download PDF</span>
+              </button>
               <UserButton afterSignOutUrl="/sign-in" />
             </div>
           </div>

@@ -1,0 +1,185 @@
+import jsPDF from 'jspdf';
+import { Expense, ExpenseCategory } from './entities/Expense';
+
+interface BudgetData {
+  category: ExpenseCategory;
+  budget: number;
+  spent: number;
+  percentage: number;
+  isOverBudget: boolean;
+}
+
+interface PDFData {
+  expenses: Expense[];
+  budgets: BudgetData[];
+  totalSpent: number;
+  period: string;
+  userName?: string;
+}
+
+export function generateExpensePDF(data: PDFData): void {
+  try {
+    console.log('Creating PDF document...');
+    const doc = new jsPDF();
+    console.log('PDF document created');
+    
+    // Set up colors
+    const primaryColor = [59, 130, 246]; // Blue
+    const darkColor = [30, 41, 59];      // Dark slate
+
+    // Header
+    doc.setFillColor(...primaryColor);
+    doc.rect(0, 0, 210, 30, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('FinanceMate', 20, 20);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Expense Summary Report', 20, 25);
+
+    // Period and date
+    doc.setTextColor(...darkColor);
+    doc.setFontSize(10);
+    doc.text(`Period: ${data.period}`, 150, 20);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 150, 25);
+
+    let yPosition = 45;
+
+    // Summary Section
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...darkColor);
+    doc.text('Summary', 20, yPosition);
+    yPosition += 10;
+
+    // Total spent
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Total Spent: $${data.totalSpent.toFixed(2)}`, 20, yPosition);
+    doc.text(`Total Expenses: ${data.expenses.length}`, 20, yPosition + 5);
+    yPosition += 15;
+
+    // Budget Performance Section
+    if (data.budgets.length > 0) {
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Budget Performance', 20, yPosition);
+      yPosition += 10;
+
+      // Budget table header
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Category', 20, yPosition);
+      doc.text('Budget', 60, yPosition);
+      doc.text('Spent', 90, yPosition);
+      doc.text('Percentage', 120, yPosition);
+      doc.text('Status', 160, yPosition);
+      yPosition += 5;
+
+      // Budget table rows
+      doc.setFont('helvetica', 'normal');
+      data.budgets.forEach(budget => {
+        doc.text(budget.category.charAt(0).toUpperCase() + budget.category.slice(1), 20, yPosition);
+        doc.text(`$${budget.budget.toFixed(2)}`, 60, yPosition);
+        doc.text(`$${budget.spent.toFixed(2)}`, 90, yPosition);
+        doc.text(`${budget.percentage.toFixed(0)}%`, 120, yPosition);
+        
+        // Color code status
+        if (budget.isOverBudget) {
+          doc.setTextColor(239, 68, 68); // Red
+        } else {
+          doc.setTextColor(34, 197, 94); // Green
+        }
+        doc.text(budget.isOverBudget ? 'Over Budget' : 'Within Budget', 160, yPosition);
+        doc.setTextColor(...darkColor); // Reset color
+        
+        yPosition += 5;
+      });
+      yPosition += 10;
+    }
+
+    // Expenses Section
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...darkColor);
+    doc.text('Expense Details', 20, yPosition);
+    yPosition += 10;
+
+    // Check if we need a new page
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 20;
+    }
+
+    // Expense table header
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Title', 20, yPosition);
+    doc.text('Category', 60, yPosition);
+    doc.text('Amount', 100, yPosition);
+    doc.text('Date', 130, yPosition);
+    doc.text('Description', 160, yPosition);
+    yPosition += 5;
+
+    // Expense table rows
+    doc.setFont('helvetica', 'normal');
+    data.expenses.forEach((expense, index) => {
+      // Check if we need a new page
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 20;
+        
+        // Redraw header
+        doc.setFont('helvetica', 'bold');
+        doc.text('Title', 20, yPosition);
+        doc.text('Category', 60, yPosition);
+        doc.text('Amount', 100, yPosition);
+        doc.text('Date', 130, yPosition);
+        doc.text('Description', 160, yPosition);
+        yPosition += 5;
+        doc.setFont('helvetica', 'normal');
+      }
+
+      doc.text(expense.title.substring(0, 25), 20, yPosition);
+      doc.text(expense.category.charAt(0).toUpperCase() + expense.category.slice(1), 60, yPosition);
+      doc.text(`$${Number(expense.amount).toFixed(2)}`, 100, yPosition);
+      doc.text(new Date(expense.date).toLocaleDateString(), 130, yPosition);
+      doc.text((expense.description || '-').substring(0, 20), 160, yPosition);
+      yPosition += 5;
+    });
+
+    // Footer
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.text(`Page ${i} of ${pageCount}`, 20, 285);
+      doc.text('Generated by FinanceMate', 150, 285);
+    }
+
+    // Download the PDF
+    const fileName = `expense-summary-${data.period.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
+    console.log('Saving PDF with filename:', fileName);
+    doc.save(fileName);
+    console.log('PDF saved successfully');
+    
+  } catch (error) {
+    console.error('Error in PDF generation:', error);
+    throw error;
+  }
+}
+
+export function getPeriodString(selectedMonth: number, selectedYear: number, filterByDate: boolean): string {
+  if (filterByDate) {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return `${monthNames[selectedMonth - 1]} ${selectedYear}`;
+  }
+  return 'All Time';
+}
