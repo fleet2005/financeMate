@@ -184,6 +184,7 @@ export default function Dashboard() {
             {/* Date filter toggle */}
             <label className="flex items-center space-x-2 text-sm text-slate-400">
               <input
+                suppressHydrationWarning
                 type="checkbox"
                 checked={filterByDate}
                 onChange={(e) => setFilterByDate(e.target.checked)}
