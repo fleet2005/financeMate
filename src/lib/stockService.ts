@@ -72,7 +72,7 @@ async function fetchYahooFinance(symbol: string, period: string): Promise<StockD
       low: result.indicators.quote[0].low[index],
       close: result.indicators.quote[0].close[index],
       volume: result.indicators.quote[0].volume[index]
-    })).filter((quote: any) => quote.close !== null);
+    })).filter((quote: { close: number | null }) => quote.close !== null);
     
     const hist = quotes;
     const info = meta;
@@ -83,11 +83,11 @@ async function fetchYahooFinance(symbol: string, period: string): Promise<StockD
     const change = currentPrice - previousPrice;
     const changePercent = previousPrice ? (change / previousPrice) * 100 : 0;
     
-    const prices = hist.map((h: any) => h.close).filter((p: number) => p !== null);
+    const prices = hist.map((h: { close: number }) => h.close).filter((p: number) => p !== null);
     const week52High = Math.max(...prices);
     const week52Low = Math.min(...prices);
     
-    const volumes = hist.map((h: any) => h.volume).filter((v: number) => v !== null);
+    const volumes = hist.map((h: { volume: number }) => h.volume).filter((v: number) => v !== null);
     const avgVolume = volumes.reduce((sum: number, vol: number) => sum + vol, 0) / volumes.length;
     
     const latestQuote = hist[hist.length - 1];

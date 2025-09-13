@@ -33,7 +33,22 @@ export default function StockChart({ data }: StockChartProps) {
   const yAxisMax = maxPrice + priceRange * 0.1;
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  interface TooltipProps {
+    active?: boolean;
+    payload?: Array<{
+      payload: {
+        formattedDate: string;
+        close: number;
+        open: number;
+        high: number;
+        low: number;
+        volume: number;
+      };
+    }>;
+    label?: string;
+  }
+
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (

@@ -15,7 +15,7 @@ export default function PortfolioPage() {
   const [updatingPrices, setUpdatingPrices] = useState(false);
 
   // Helper function to safely format numbers
-  const safeNumber = (value: any): number => {
+  const safeNumber = (value: unknown): number => {
     const num = Number(value);
     return Number.isNaN(num) ? 0 : num;
   };

@@ -5,7 +5,7 @@ import { Expense, ExpenseCategory } from './entities/Expense';
 // Extend jsPDF type to include autoTable
 declare module 'jspdf' {
   interface jsPDF {
-    autoTable: (options: any) => jsPDF;
+    autoTable: (options: unknown) => jsPDF;
   }
 }
 
@@ -31,14 +31,11 @@ export function generateExpensePDF(data: PDFData): void {
     const doc = new jsPDF();
     
     // Add autoTable plugin
-    (doc as any).autoTable = autoTable;
+    (doc as unknown as { autoTable: typeof autoTable }).autoTable = autoTable;
     console.log('AutoTable plugin added');
   
   // Set up colors
   const primaryColor = [59, 130, 246]; // Blue
-  const successColor = [34, 197, 94];  // Green
-  const warningColor = [245, 158, 11]; // Yellow
-  const dangerColor = [239, 68, 68];   // Red
   const darkColor = [30, 41, 59];      // Dark slate
 
   // Header

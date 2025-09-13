@@ -51,7 +51,19 @@ export default function PortfolioChart({ portfolios }: PortfolioChartProps) {
     }
   }, [portfolios]);
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  interface TooltipProps {
+    active?: boolean;
+    payload?: Array<{
+      payload: {
+        symbol: string;
+        value: number;
+        gainLoss: number;
+        gainLossPercentage: number;
+      };
+    }>;
+  }
+
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -71,7 +83,7 @@ export default function PortfolioChart({ portfolios }: PortfolioChartProps) {
     return null;
   };
 
-  const renderLabel = (entry: any) => {
+  const renderLabel = (entry: { name: string; value: number }) => {
     const totalPortfolioValue = portfolios.reduce((sum, p) => sum + (Number(p.totalValue) || 0), 0);
     const percent = totalPortfolioValue > 0 ? ((entry.value / totalPortfolioValue) * 100).toFixed(1) : '0.0';
     return `${entry.name} (${percent}%)`;
