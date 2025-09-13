@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { Plus, TrendingUp, DollarSign, Calendar, Filter, Download } from 'lucide-react';
+import { Plus, TrendingUp, DollarSign, Calendar, Filter, Download, BarChart3 } from 'lucide-react';
 import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
 import AddExpenseModal from './AddExpenseModal';
 import UploadReceiptModal from './UploadReceiptModal';
@@ -172,6 +172,15 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-white">FinanceMate</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <a
+                href="/portfolio"
+                className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
+                title="View Portfolio Tracker"
+                suppressHydrationWarning
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>Portfolio</span>
+              </a>
               <a
                 href="/stocks"
                 className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
