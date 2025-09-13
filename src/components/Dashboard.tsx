@@ -172,10 +172,20 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-white">FinanceMate</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <a
+                href="/stocks"
+                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                title="View Stock Tracker"
+                suppressHydrationWarning
+              >
+                <TrendingUp className="h-4 w-4" />
+                <span>Stocks</span>
+              </a>
               <button
                 onClick={handleDownloadPDF}
                 className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
                 title="Download Expense Summary as PDF"
+                suppressHydrationWarning
               >
                 <Download className="h-4 w-4" />
                 <span>Download PDF</span>
