@@ -159,7 +159,7 @@ export default function BudgetPanel({ selectedMonth, selectedYear, filterByDate,
               <div className="mb-3">
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-slate-400">
-                    ${budget.spent.toFixed(2)} of ${Number(budget.amount).toFixed(2)}
+                    ₹{budget.spent.toFixed(2)} of ₹{Number(budget.amount).toFixed(2)}
                   </span>
                   <span className={`font-medium ${budget.isOverBudget ? 'text-red-400' : 'text-slate-300'}`}>
                     {budget.percentage.toFixed(0)}%
@@ -175,7 +175,7 @@ export default function BudgetPanel({ selectedMonth, selectedYear, filterByDate,
 
               <div className="flex justify-between text-sm">
                 <span className={`${budget.isOverBudget ? 'text-red-400' : 'text-slate-400'}`}>
-                  {budget.isOverBudget ? `Over by $${Math.abs(budget.remaining).toFixed(2)}` : `Remaining: $${budget.remaining.toFixed(2)}`}
+                  {budget.isOverBudget ? `Over by ₹${Math.abs(budget.remaining).toFixed(2)}` : `Remaining: ₹${budget.remaining.toFixed(2)}`}
                 </span>
                 {budget.description && (
                   <span className="text-slate-500 text-xs">{budget.description}</span>

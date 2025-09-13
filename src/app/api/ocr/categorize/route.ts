@@ -80,7 +80,7 @@ Receipt text:\n\n${rawText}`;
     // Heuristic fallback if AI output is unusable
     if (!parsed) {
       // Try simple regex extraction for amount/date/vendor
-      const amountMatch = rawText.match(/total\s*[:\-]?\s*([$£€])?\s*(\d+[.,]?\d{0,2})/i) || rawText.match(/([£$€])\s?(\d+[.,]?\d{0,2})\b/);
+      const amountMatch = rawText.match(/total\s*[:\-]?\s*([$£€₹])?\s*(\d+[.,]?\d{0,2})/i) || rawText.match(/([£$€₹])\s?(\d+[.,]?\d{0,2})\b/);
       const dateMatch = rawText.match(/\b(\d{4}[\/-]\d{1,2}[\/-]\d{1,2}|\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4})\b/);
       const firstLine = rawText.split(/\r?\n/).map(s => s.trim()).filter(Boolean)[0] || 'Receipt';
       const amt = amountMatch ? Number((amountMatch[2] || amountMatch[0]).replace(/[^0-9.]/g, '')) : NaN;

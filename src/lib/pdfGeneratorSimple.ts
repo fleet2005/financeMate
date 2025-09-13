@@ -58,7 +58,7 @@ export function generateExpensePDF(data: PDFData): void {
     // Total spent
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Total Spent: $${data.totalSpent.toFixed(2)}`, 20, yPosition);
+    doc.text(`Total Spent: ₹${data.totalSpent.toFixed(2)}`, 20, yPosition);
     doc.text(`Total Expenses: ${data.expenses.length}`, 20, yPosition + 5);
     yPosition += 15;
 
@@ -83,8 +83,8 @@ export function generateExpensePDF(data: PDFData): void {
       doc.setFont('helvetica', 'normal');
       data.budgets.forEach(budget => {
         doc.text(budget.category.charAt(0).toUpperCase() + budget.category.slice(1), 20, yPosition);
-        doc.text(`$${budget.budget.toFixed(2)}`, 60, yPosition);
-        doc.text(`$${budget.spent.toFixed(2)}`, 90, yPosition);
+        doc.text(`₹${budget.budget.toFixed(2)}`, 60, yPosition);
+        doc.text(`₹${budget.spent.toFixed(2)}`, 90, yPosition);
         doc.text(`${budget.percentage.toFixed(0)}%`, 120, yPosition);
         
         // Color code status
@@ -145,7 +145,7 @@ export function generateExpensePDF(data: PDFData): void {
 
       doc.text(expense.title.substring(0, 25), 20, yPosition);
       doc.text(expense.category.charAt(0).toUpperCase() + expense.category.slice(1), 60, yPosition);
-      doc.text(`$${Number(expense.amount).toFixed(2)}`, 100, yPosition);
+      doc.text(`₹${Number(expense.amount).toFixed(2)}`, 100, yPosition);
       doc.text(new Date(expense.date).toLocaleDateString(), 130, yPosition);
       doc.text((expense.description || '-').substring(0, 20), 160, yPosition);
       yPosition += 5;

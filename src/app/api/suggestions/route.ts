@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
 
     const budgetInfo = budgetPerformance.length > 0 
       ? `\nBudget Performance:\n${budgetPerformance.map(b => 
-          `- ${b.category}: $${b.spent.toFixed(2)} / $${b.budget.toFixed(2)} (${b.percentage.toFixed(0)}%)${b.isOverBudget ? ' - OVER BUDGET' : ''}`
+          `- ${b.category}: ₹${b.spent.toFixed(2)} / ₹${b.budget.toFixed(2)} (${b.percentage.toFixed(0)}%)${b.isOverBudget ? ' - OVER BUDGET' : ''}`
         ).join('\n')}`
       : '';
 
@@ -113,12 +113,12 @@ export async function GET(request: NextRequest) {
     const prompt = `
     Analyze this user's spending data and provide 3-5 practical savings suggestions:
     
-    Total spent this month: $${totalSpent.toFixed(2)}
-    Top spending category: ${topCategory[0]} ($${topCategory[1].toFixed(2)})
+    Total spent this month: ₹${totalSpent.toFixed(2)}
+    Top spending category: ${topCategory[0]} (₹${topCategory[1].toFixed(2)})
     Number of transactions: ${expenses.length}${budgetInfo}
     
     Recent expenses:
-    ${expenses.slice(0, 10).map(e => `- ${e.title}: $${e.amount} (${e.category})`).join('\n')}
+    ${expenses.slice(0, 10).map(e => `- ${e.title}: ₹${e.amount} (${e.category})`).join('\n')}
     
     IMPORTANT: The user already has budgets set up. Do NOT suggest setting budgets. Instead, focus on:
     1. Over-budget categories: ${overBudgetCategories.map(b => b.category).join(', ') || 'None'}
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
         fallbackSuggestions.push({
           type: 'warning',
           title: `${budget.category} over budget`,
-          message: `You've exceeded your ${budget.category} budget by $${(budget.spent - budget.budget).toFixed(2)}. Consider reducing spending in this category.`,
+          message: `You've exceeded your ${budget.category} budget by ₹${(budget.spent - budget.budget).toFixed(2)}. Consider reducing spending in this category.`,
           priority: 'high',
           category: budget.category
         });
@@ -182,7 +182,7 @@ export async function GET(request: NextRequest) {
         fallbackSuggestions.push({
           type: 'tip',
           title: `${budget.category} near budget limit`,
-          message: `Your ${budget.category} spending is at ${budget.percentage.toFixed(0)}% of budget. You have $${(budget.budget - budget.spent).toFixed(2)} remaining.`,
+          message: `Your ${budget.category} spending is at ${budget.percentage.toFixed(0)}% of budget. You have ₹${(budget.budget - budget.spent).toFixed(2)} remaining.`,
           priority: 'medium',
           category: budget.category
         });
@@ -193,7 +193,7 @@ export async function GET(request: NextRequest) {
         fallbackSuggestions.push({
           type: 'savings',
           title: 'Reduce top category spending',
-          message: `Your biggest expense is ${topCategory[0]} at $${topCategory[1].toFixed(2)}. Look for ways to reduce costs in this area.`,
+          message: `Your biggest expense is ${topCategory[0]} at ₹${topCategory[1].toFixed(2)}. Look for ways to reduce costs in this area.`,
           priority: 'medium',
           category: topCategory[0]
         });

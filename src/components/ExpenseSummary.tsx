@@ -38,7 +38,7 @@ export default function ExpenseSummary({ expenses }: ExpenseSummaryProps) {
           <div className="space-y-3 mb-6">
             <div className="flex justify-between">
               <span className="text-sm text-slate-400">Total Spent:</span>
-              <span className="font-semibold text-white">${totalSpent.toFixed(2)}</span>
+              <span className="font-semibold text-white">₹{totalSpent.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-slate-400">Transactions:</span>
@@ -46,7 +46,7 @@ export default function ExpenseSummary({ expenses }: ExpenseSummaryProps) {
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-slate-400">Average:</span>
-              <span className="font-semibold text-white">${averageExpense.toFixed(2)}</span>
+              <span className="font-semibold text-white">₹{averageExpense.toFixed(2)}</span>
             </div>
           </div>
 
@@ -69,7 +69,7 @@ export default function ExpenseSummary({ expenses }: ExpenseSummaryProps) {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Amount']} />
+                  <Tooltip formatter={(value) => [`₹${Number(value).toFixed(2)}`, 'Amount']} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -90,7 +90,7 @@ export default function ExpenseSummary({ expenses }: ExpenseSummaryProps) {
                     />
                     <span className="text-slate-400">{item.name}</span>
                   </div>
-                  <span className="font-medium text-white">${item.value.toFixed(2)}</span>
+                  <span className="font-medium text-white">₹{item.value.toFixed(2)}</span>
                 </div>
               ))}
           </div>

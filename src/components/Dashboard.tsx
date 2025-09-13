@@ -196,7 +196,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-slate-400">Total Spent</p>
-                <p className="text-2xl font-bold text-white">${totalSpent.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-white">₹{totalSpent.toFixed(2)}</p>
               </div>
             </div>
           </div>

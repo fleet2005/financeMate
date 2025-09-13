@@ -72,7 +72,7 @@ export function generateExpensePDF(data: PDFData): void {
   // Total spent
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Total Spent: $${data.totalSpent.toFixed(2)}`, 20, yPosition);
+  doc.text(`Total Spent: ₹${data.totalSpent.toFixed(2)}`, 20, yPosition);
   doc.text(`Total Expenses: ${data.expenses.length}`, 20, yPosition + 5);
   yPosition += 15;
 
@@ -86,8 +86,8 @@ export function generateExpensePDF(data: PDFData): void {
     // Budget table
     const budgetTableData = data.budgets.map(budget => [
       budget.category.charAt(0).toUpperCase() + budget.category.slice(1),
-      `$${budget.budget.toFixed(2)}`,
-      `$${budget.spent.toFixed(2)}`,
+      `₹${budget.budget.toFixed(2)}`,
+      `₹${budget.spent.toFixed(2)}`,
       `${budget.percentage.toFixed(0)}%`,
       budget.isOverBudget ? 'Over Budget' : 'Within Budget'
     ]);
@@ -130,7 +130,7 @@ export function generateExpensePDF(data: PDFData): void {
   const expenseTableData = data.expenses.map(expense => [
     expense.title,
     expense.category.charAt(0).toUpperCase() + expense.category.slice(1),
-    `$${Number(expense.amount).toFixed(2)}`,
+    `₹${Number(expense.amount).toFixed(2)}`,
     new Date(expense.date).toLocaleDateString(),
     expense.description || '-'
   ]);
