@@ -94,7 +94,7 @@ export default function AddPortfolioModal({ onClose, onPortfolioAdded }: AddPort
         const errorData = await response.json();
         setError(errorData.error || 'Failed to add portfolio');
       }
-    } catch (error) {
+    } catch {
       setError('Failed to add portfolio');
     } finally {
       setLoading(false);

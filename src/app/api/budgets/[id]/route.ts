@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { initializeDatabase } from '@/lib/database';
 import { Budget } from '@/lib/entities/Budget';
-import { ExpenseCategory } from '@/lib/entities/Expense';
 import { z } from 'zod';
 
 const updateBudgetSchema = z.object({
@@ -70,7 +69,7 @@ export async function PUT(
     return NextResponse.json(updatedBudget);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return NextResponse.json({ error: error.issues }, { status: 400 });
     }
     console.error('Error updating budget:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

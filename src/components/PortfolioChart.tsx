@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Portfolio } from '@/lib/entities/Portfolio';
 
 interface PortfolioChartProps {
@@ -83,11 +83,6 @@ export default function PortfolioChart({ portfolios }: PortfolioChartProps) {
     return null;
   };
 
-  const renderLabel = (entry: { name: string; value: number }) => {
-    const totalPortfolioValue = portfolios.reduce((sum, p) => sum + (Number(p.totalValue) || 0), 0);
-    const percent = totalPortfolioValue > 0 ? ((entry.value / totalPortfolioValue) * 100).toFixed(1) : '0.0';
-    return `${entry.name} (${percent}%)`;
-  };
 
   if (chartData.length === 0) {
     return (
@@ -140,13 +135,13 @@ export default function PortfolioChart({ portfolios }: PortfolioChartProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={renderLabel}
+                label={false}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
@@ -177,7 +172,7 @@ export default function PortfolioChart({ portfolios }: PortfolioChartProps) {
           <div key={item.symbol} className="flex items-center space-x-2">
             <div 
               className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: item.color }}
+              style={{ backgroundColor: COLORS[index % COLORS.length] }}
             />
             <span className="text-slate-300 truncate">{item.name}</span>
             <span className="text-white font-medium">

@@ -5,14 +5,13 @@ import { X, UploadCloud } from 'lucide-react';
 
 interface UploadReceiptModalProps {
   onClose: () => void;
-  onCreated: (expense: any) => void;
+  onCreated: (expense: { id: string; amount: number; description: string; category: string; date: string }) => void;
 }
 
 export default function UploadReceiptModal({ onClose, onCreated }: UploadReceiptModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [rawText, setRawText] = useState('');
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -37,7 +36,6 @@ export default function UploadReceiptModal({ onClose, onCreated }: UploadReceipt
         setError('Could not read text from the image.');
         return;
       }
-      setRawText(text);
 
       // Send text for categorization + saving
       const res = await fetch('/api/ocr/categorize', {
@@ -52,7 +50,7 @@ export default function UploadReceiptModal({ onClose, onCreated }: UploadReceipt
       }
       onCreated(data.expense);
       onClose();
-    } catch (err) {
+    } catch {
       setError('Network error, please try again.');
     } finally {
       setLoading(false);

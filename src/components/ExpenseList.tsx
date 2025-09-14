@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Trash2, Edit, DollarSign } from 'lucide-react';
+import { Trash2, DollarSign } from 'lucide-react';
 import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
 import { format } from 'date-fns';
 
@@ -29,7 +29,7 @@ export default function ExpenseList({ expenses, onExpenseDeleted }: ExpenseListP
       } else {
         alert('Failed to delete expense');
       }
-    } catch (error) {
+    } catch {
       alert('Network error. Please try again.');
     } finally {
       setDeletingId(null);

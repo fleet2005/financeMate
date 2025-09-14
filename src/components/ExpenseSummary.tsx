@@ -1,7 +1,7 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Expense } from '@/lib/entities/Expense';
 
 interface ExpenseSummaryProps {
   expenses: Expense[];
@@ -60,7 +60,7 @@ export default function ExpenseSummary({ expenses }: ExpenseSummaryProps) {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }) => `${name} (${percentage}%)`}
+                    label={({ name }) => name}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"

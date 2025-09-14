@@ -15,33 +15,33 @@ export enum ExpenseCategory {
 @Entity('expenses')
 export class Expense {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column('text', { nullable: true })
-  description: string;
+  description?: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @Column({
     type: 'enum',
     enum: ExpenseCategory,
     default: ExpenseCategory.OTHER
   })
-  category: ExpenseCategory;
+  category!: ExpenseCategory;
 
   @Column({ type: 'date' })
-  date: Date;
+  date!: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

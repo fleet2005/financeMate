@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Trash2, TrendingUp, TrendingDown, MoreVertical } from 'lucide-react';
+import { Edit, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import { Portfolio } from '@/lib/entities/Portfolio';
 
 interface PortfolioListProps {

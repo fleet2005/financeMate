@@ -15,7 +15,7 @@ export default function SignInPage() {
             }
           }}
           forceRedirectUrl="/dashboard"
-          signUpUrl={null}
+          signUpUrl={undefined}
           redirectUrl="/dashboard"
         />
       </div>

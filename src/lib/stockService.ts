@@ -112,7 +112,7 @@ async function fetchYahooFinance(symbol: string, period: string): Promise<StockD
       sector: info.sector || null,
       industry: info.industry || null,
       description: info.longBusinessSummary || null,
-      historicalData: hist.map((quote: any) => ({
+      historicalData: hist.map((quote: { timestamp: number; open: number; high: number; low: number; close: number; volume: number }) => ({
         date: new Date(quote.timestamp * 1000).toISOString().split('T')[0],
         open: Number(quote.open.toFixed(2)),
         high: Number(quote.high.toFixed(2)),
@@ -149,8 +149,6 @@ function generateRealisticMockData(symbol: string, period: string): StockData {
   };
 
   const basePrice = realisticPrices[symbol.toUpperCase()] || Math.random() * 1000 + 100;
-  const change = (Math.random() - 0.5) * (basePrice * 0.1); // ±5% change
-  const changePercent = (change / basePrice) * 100;
   
   // Generate historical data
   const days = period === '1d' ? 1 : period === '5d' ? 5 : period === '1mo' ? 30 : 

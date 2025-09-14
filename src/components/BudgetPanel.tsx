@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Target, Plus, Trash2, AlertTriangle, TrendingUp } from 'lucide-react';
+import { Target, Plus, Trash2, AlertTriangle } from 'lucide-react';
 import { ExpenseCategory } from '@/lib/entities/Expense';
 import BudgetModal from './BudgetModal';
 
@@ -76,7 +76,7 @@ export default function BudgetPanel({ selectedMonth, selectedYear, filterByDate,
       } else {
         alert('Failed to delete budget');
       }
-    } catch (error) {
+    } catch {
       alert('Network error. Please try again.');
     }
   };

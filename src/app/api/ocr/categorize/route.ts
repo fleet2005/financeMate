@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const body = await request.json().catch(() => null as any);
+    const body = await request.json().catch(() => null) as { rawText?: string } | null;
     const rawText = body?.rawText as string;
     if (!rawText || typeof rawText !== 'string') {
       return NextResponse.json({ error: 'rawText is required' }, { status: 400 });
@@ -31,7 +31,7 @@ Receipt text:\n\n${rawText}`;
 
     // Retry with backoff and model fallback to handle transient 5xx and overloads
     const maxAttempts = 4;
-    let lastError: any = null;
+    let lastError: unknown = null;
     let text = '';
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       for (const m of models) {
@@ -41,10 +41,10 @@ Receipt text:\n\n${rawText}`;
           text = await result.response.text();
           lastError = null;
           break;
-        } catch (err: any) {
+        } catch (err: unknown) {
           lastError = err;
           // Only backoff on 5xx errors; for 4xx, break early
-          const status = err?.status || err?.response?.status;
+          const status = (err as { status?: number; response?: { status?: number } })?.status || (err as { status?: number; response?: { status?: number } })?.response?.status;
           if (status && status >= 400 && status < 500 && status !== 429) {
             break;
           }
@@ -61,7 +61,7 @@ Receipt text:\n\n${rawText}`;
     }
 
     // Try to parse JSON robustly
-    let parsed: any = null;
+    let parsed: { title?: string; amount?: number; category?: string; date?: string; description?: string } | null = null;
     const tryParsers = () => {
       // 1) direct JSON
       try { return JSON.parse(text); } catch {}
@@ -101,7 +101,7 @@ Receipt text:\n\n${rawText}`;
 
     const amount = Number(parsed.amount);
     const date = parsed.date ? new Date(parsed.date) : new Date();
-    const category = (Object.values(ExpenseCategory) as string[]).includes(parsed.category)
+    const category = (Object.values(ExpenseCategory) as string[]).includes(parsed.category || '')
       ? parsed.category
       : ExpenseCategory.OTHER;
 
@@ -117,7 +117,7 @@ Receipt text:\n\n${rawText}`;
       amount,
       category: category as ExpenseCategory,
       date,
-      description: parsed.description ? String(parsed.description).slice(0, 500) : null as any,
+      description: parsed.description ? String(parsed.description).slice(0, 500) : undefined,
     });
     const saved = await repo.save(expense);
 

@@ -48,7 +48,7 @@ export default function StockChart({ data }: StockChartProps) {
     label?: string;
   }
 
-  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (

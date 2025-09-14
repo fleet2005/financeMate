@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { TrendingUp, Search, BarChart3, DollarSign, Calendar, TrendingDown, ArrowLeft } from 'lucide-react';
+import { TrendingUp, BarChart3, DollarSign, TrendingDown, ArrowLeft } from 'lucide-react';
 import StockChart from '@/components/StockChart';
 import StockSelector from '@/components/StockSelector';
 

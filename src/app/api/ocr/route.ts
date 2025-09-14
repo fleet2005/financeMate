@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 
     // OCR with Tesseract.js
     const { data } = await Tesseract.recognize(imageBuffer, 'eng', {
+      // @ts-expect-error - Tesseract.js specific option
       tessjs_create_pdf: '0',
     });
     const rawText = data.text?.trim() || '';
@@ -56,16 +57,16 @@ Receipt text:\n\n${rawText}`;
     const result = await model.generateContent(prompt);
     const text = await result.response.text();
 
-    let parsed: any;
+    let parsed: { amount?: number; date?: string; category?: string; title?: string; description?: string };
     try {
       parsed = JSON.parse(text);
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: 'Failed to parse categorization', raw: text }, { status: 502 });
     }
 
     const amount = Number(parsed.amount);
     const date = parsed.date ? new Date(parsed.date) : new Date();
-    const category = (Object.values(ExpenseCategory) as string[]).includes(parsed.category)
+    const category = (Object.values(ExpenseCategory) as string[]).includes(parsed.category || '')
       ? parsed.category
       : ExpenseCategory.OTHER;
 
@@ -81,7 +82,7 @@ Receipt text:\n\n${rawText}`;
       amount,
       category: category as ExpenseCategory,
       date,
-      description: parsed.description ? String(parsed.description).slice(0, 500) : null as any,
+      description: parsed.description ? String(parsed.description).slice(0, 500) : undefined,
     });
     const saved = await repo.save(expense);
 

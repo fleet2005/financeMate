@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Target } from 'lucide-react';
+import { X } from 'lucide-react';
 import { ExpenseCategory } from '@/lib/entities/Expense';
 
 interface BudgetModalProps {
@@ -11,7 +11,7 @@ interface BudgetModalProps {
   selectedYear?: number;
 }
 
-export default function BudgetModal({ onClose, onBudgetCreated, selectedMonth, selectedYear }: BudgetModalProps) {
+export default function BudgetModal({ onClose, onBudgetCreated }: BudgetModalProps) {
   // Always use current month for budget creation
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
@@ -49,7 +49,7 @@ export default function BudgetModal({ onClose, onBudgetCreated, selectedMonth, s
         const errorData = await response.json();
         setError(errorData.error || 'Failed to create budget');
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);

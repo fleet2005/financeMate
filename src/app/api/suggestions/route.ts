@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
     } catch (parseError) {
       console.log('AI JSON parse error, using fallback suggestions');
       console.log('Parse error:', parseError);
-      console.log('Cleaned text:', cleanText);
+      console.log('Cleaned text:', text);
       // Fallback if AI doesn't return valid JSON
       const overBudgetCategories = budgetPerformance.filter(b => b.isOverBudget);
       const nearBudgetCategories = budgetPerformance.filter(b => b.percentage >= 80 && !b.isOverBudget);

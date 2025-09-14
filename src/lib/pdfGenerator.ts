@@ -39,7 +39,7 @@ export function generateExpensePDF(data: PDFData): void {
   const darkColor = [30, 41, 59];      // Dark slate
 
   // Header
-  doc.setFillColor(...primaryColor);
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.rect(0, 0, 210, 30, 'F');
   
   doc.setTextColor(255, 255, 255);
@@ -52,7 +52,7 @@ export function generateExpensePDF(data: PDFData): void {
   doc.text('Expense Summary Report', 20, 25);
 
   // Period and date
-  doc.setTextColor(...darkColor);
+  doc.setTextColor(darkColor[0], darkColor[1], darkColor[2]);
   doc.setFontSize(10);
   doc.text(`Period: ${data.period}`, 150, 20);
   doc.text(`Generated: ${new Date().toLocaleDateString()}`, 150, 25);
@@ -62,7 +62,7 @@ export function generateExpensePDF(data: PDFData): void {
   // Summary Section
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...darkColor);
+  doc.setTextColor(darkColor[0], darkColor[1], darkColor[2]);
   doc.text('Summary', 20, yPosition);
   yPosition += 10;
 
@@ -113,13 +113,13 @@ export function generateExpensePDF(data: PDFData): void {
       }
     });
 
-    yPosition = (doc as any).lastAutoTable.finalY + 15;
+    yPosition = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 15;
   }
 
   // Expenses Section
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...darkColor);
+  doc.setTextColor(darkColor[0], darkColor[1], darkColor[2]);
   doc.text('Expense Details', 20, yPosition);
   yPosition += 10;
 

@@ -4,29 +4,29 @@ import { ExpenseCategory } from './Expense';
 @Entity('budgets')
 export class Budget {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column({
     type: 'enum',
     enum: ExpenseCategory,
   })
-  category: ExpenseCategory;
+  category!: ExpenseCategory;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @Column({ type: 'date' })
-  month: Date; // First day of the month (YYYY-MM-01)
+  month!: Date; // First day of the month (YYYY-MM-01)
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

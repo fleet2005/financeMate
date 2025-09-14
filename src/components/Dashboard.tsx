@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UserButton } from '@clerk/nextjs';
 import { Plus, TrendingUp, DollarSign, Calendar, Filter, Download, BarChart3 } from 'lucide-react';
 import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
@@ -41,7 +41,7 @@ export default function Dashboard() {
     setSelectedYear(now.getFullYear());
   }, []);
 
-  const fetchExpenses = async () => {
+  const fetchExpenses = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (selectedCategory !== 'all') params.append('category', selectedCategory);
@@ -58,9 +58,9 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error fetching expenses:', error);
     }
-  };
+  }, [selectedCategory, selectedMonth, selectedYear, filterByDate]);
 
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       // Only add date filters if date filtering is enabled
@@ -77,7 +77,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error fetching suggestions:', error);
     }
-  };
+  }, [selectedMonth, selectedYear, filterByDate]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -88,7 +88,7 @@ export default function Dashboard() {
       setLoading(false);
     };
     loadData();
-  }, [mounted, selectedCategory, selectedMonth, selectedYear, filterByDate]);
+  }, [mounted, fetchExpenses, fetchSuggestions]);
 
   const handleExpenseAdded = () => {
     fetchExpenses();
@@ -132,7 +132,7 @@ export default function Dashboard() {
       
       if (budgetResponse.ok) {
         const budgetData = await budgetResponse.json();
-        budgets = budgetData.map((budget: any) => ({
+        budgets = budgetData.map((budget: { category: string; amount: number; spent: number; percentage: number; isOverBudget: boolean }) => ({
           category: budget.category,
           budget: Number(budget.amount),
           spent: budget.spent,
@@ -158,7 +158,7 @@ export default function Dashboard() {
       console.log('PDF generation completed');
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert(`Failed to generate PDF: ${error.message || 'Unknown error'}`);
+      alert(`Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

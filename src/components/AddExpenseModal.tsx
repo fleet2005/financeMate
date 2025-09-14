@@ -43,7 +43,7 @@ export default function AddExpenseModal({ onClose, onExpenseAdded }: AddExpenseM
         const errorData = await response.json();
         setError(errorData.error || 'Failed to add expense');
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);
