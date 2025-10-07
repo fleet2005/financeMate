@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { ArrowLeft, Plus, TrendingUp, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Plus, TrendingUp, TrendingDown, RefreshCw, BarChart3, Newspaper } from 'lucide-react';
 import { Portfolio } from '@/lib/entities/Portfolio';
 import AddPortfolioModal from '@/components/AddPortfolioModal';
 import PortfolioList from '@/components/PortfolioList';
@@ -130,6 +130,15 @@ export default function PortfolioPage() {
                 <Plus className="h-4 w-4" />
                 <span>Add Stock</span>
               </button>
+              <a
+                href="/catch-up"
+                className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                title="Catch up on latest finance news"
+                suppressHydrationWarning
+              >
+                <Newspaper className="h-4 w-4" />
+                <span>Catch-up</span>
+              </a>
               <UserButton afterSignOutUrl="/sign-in" />
             </div>
           </div>

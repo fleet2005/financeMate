@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { Plus, TrendingUp, DollarSign, Calendar, Filter, Download, BarChart3 } from 'lucide-react';
+import { Plus, TrendingUp, DollarSign, Calendar, Filter, Download, BarChart3, Newspaper } from 'lucide-react';
 import { Expense, ExpenseCategory } from '@/lib/entities/Expense';
 import AddExpenseModal from './AddExpenseModal';
 import UploadReceiptModal from './UploadReceiptModal';
@@ -189,6 +189,15 @@ export default function Dashboard() {
               >
                 <TrendingUp className="h-4 w-4" />
                 <span>Stocks</span>
+              </a>
+              <a
+                href="/catch-up"
+                className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                title="Catch up on latest finance news"
+                suppressHydrationWarning
+              >
+                <Newspaper className="h-4 w-4" />
+                <span>Catch-up</span>
               </a>
               <button
                 onClick={handleDownloadPDF}
