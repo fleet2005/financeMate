@@ -18,6 +18,7 @@ export default function CatchUpPage() {
   const [articles, setArticles] = useState<ArticleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastFetched, setLastFetched] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -30,6 +31,7 @@ export default function CatchUpPage() {
         }
         const data = await response.json();
         setArticles(Array.isArray(data?.articles) ? data.articles : []);
+        setLastFetched(data.fetchedAt);
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
       } finally {
@@ -80,7 +82,26 @@ export default function CatchUpPage() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && lastFetched && (
+          <div className="mb-6 bg-slate-800 border border-slate-700 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-slate-300 text-sm">
+                  Last updated: {new Date(lastFetched).toLocaleString()}
+                </span>
+              </div>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-indigo-400 hover:text-indigo-300 text-sm underline"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && articles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.slice(0, 15).map((article, idx) => (
               <a
@@ -114,6 +135,15 @@ export default function CatchUpPage() {
                 </div>
               </a>
             ))}
+          </div>
+        )}
+
+        {!loading && !error && articles.length === 0 && (
+          <div className="bg-slate-800 rounded-lg shadow-lg p-8 text-center border border-slate-700">
+            <div className="text-slate-400">
+              <p className="text-lg mb-2">No articles found</p>
+              <p className="text-sm">Try refreshing the page or check back later for the latest financial news.</p>
+            </div>
           </div>
         )}
       </div>

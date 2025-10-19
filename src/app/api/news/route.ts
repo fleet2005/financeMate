@@ -21,7 +21,13 @@ export async function GET(request: NextRequest) {
 
     const url = `http://api.mediastack.com/v1/news?${params.toString()}`;
 
-    const response = await fetch(url, { next: { revalidate: 300 } });
+    const response = await fetch(url, { 
+      next: { revalidate: 60 },
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
     if (!response.ok) {
       const text = await response.text();
       return NextResponse.json({ error: 'Failed to fetch news', details: text }, { status: 502 });
@@ -49,7 +55,10 @@ export async function GET(request: NextRequest) {
       country: a?.country ?? '',
     }));
 
-    return NextResponse.json({ articles: sanitized });
+    return NextResponse.json({ 
+      articles: sanitized,
+      fetchedAt: new Date().toISOString()
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Unexpected error', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
