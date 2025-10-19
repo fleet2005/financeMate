@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
+import ChatBot from '@/components/ChatBot';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <ChatBot />
         </body>
       </html>
     </ClerkProvider>

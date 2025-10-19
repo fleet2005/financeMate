@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Use Gemini to parse fields and categorize
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
     const categories = Object.values(ExpenseCategory).join(', ');
     const prompt = `You are given receipt text extracted by OCR. Extract fields and categorize.
