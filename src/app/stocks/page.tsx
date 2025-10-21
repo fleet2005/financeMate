@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { TrendingUp, BarChart3, DollarSign, TrendingDown, ArrowLeft } from 'lucide-react';
+import { TrendingUp, BarChart3, DollarSign, TrendingDown, ArrowLeft, Calculator } from 'lucide-react';
 import StockChart from '@/components/StockChart';
 import StockSelector from '@/components/StockSelector';
+import BuyStrengthEvaluation from '@/components/BuyStrengthEvaluation';
 
 interface StockData {
   symbol: string;
@@ -37,11 +38,12 @@ interface StockData {
 }
 
 export default function StocksPage() {
-  const [selectedStock, setSelectedStock] = useState<string>('AAPL');
+  const [selectedStock, setSelectedStock] = useState<string>('RELIANCE.BSE');
   const [stockData, setStockData] = useState<StockData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [period, setPeriod] = useState<string>('1mo');
+  const [showEvaluation, setShowEvaluation] = useState(false);
 
   const fetchStockData = async (symbol: string, period: string) => {
     setLoading(true);
@@ -272,6 +274,17 @@ export default function StocksPage() {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Evaluate Button */}
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setShowEvaluation(true)}
+                      className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+                    >
+                      <Calculator className="h-4 w-4" />
+                      <span>Evaluate Buy Strength</span>
+                    </button>
+                  </div>
                 </div>
 
                 {stockData.sector && (
@@ -302,6 +315,15 @@ export default function StocksPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* Buy Strength Evaluation Modal */}
+        {stockData && (
+          <BuyStrengthEvaluation
+            stockData={stockData}
+            isOpen={showEvaluation}
+            onClose={() => setShowEvaluation(false)}
+          />
         )}
       </div>
     </div>
