@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { X, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, BarChart3, Activity } from 'lucide-react';
 
 interface StockData {
