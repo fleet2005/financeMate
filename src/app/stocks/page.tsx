@@ -81,6 +81,8 @@ export default function StocksPage() {
     return num.toString();
   };
 
+  
+
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header */}
@@ -184,14 +186,12 @@ export default function StocksPage() {
                 </div>
               </div>
 
-              {/* Market Cap */}
+              {/* Previous Close */}
               <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-400">Market Cap</p>
-                    <p className="text-2xl font-bold text-white">
-                      {stockData.marketCap ? `₹${formatNumber(stockData.marketCap)}` : 'N/A'}
-                    </p>
+                    <p className="text-sm text-slate-400">Previous Close</p>
+                    <p className="text-2xl font-bold text-white">₹{stockData.previousClose}</p>
                   </div>
                   <BarChart3 className="h-8 w-8 text-blue-400" />
                 </div>
