@@ -190,6 +190,7 @@ INSTRUCTIONS:
 4. Be specific about amounts and categories
 5. Keep responses concise but helpful
 6. If they ask about topics not in their financial data, politely redirect to finance topics while being helpful
+7. IMPORTANT: Do NOT use Markdown formatting (no **, no #, no lists with *). Use plain text only. Use simple line breaks for structure.
 
 Provide a personalized response based on their actual financial situation:`;
   }
