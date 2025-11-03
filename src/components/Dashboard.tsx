@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -60,7 +61,10 @@ export default function Dashboard() {
     }
   }, [selectedCategory, selectedMonth, selectedYear, filterByDate]);
 
-  const fetchSuggestions = useCallback(async () => {
+  const fetchSuggestions = useCallback(async (showLoading = false) => {
+    if (showLoading) {
+      setLoadingSuggestions(true);
+    }
     try {
       const params = new URLSearchParams();
       // Only add date filters if date filtering is enabled
@@ -76,6 +80,10 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error('Error fetching suggestions:', error);
+    } finally {
+      if (showLoading) {
+        setLoadingSuggestions(false);
+      }
     }
   }, [selectedMonth, selectedYear, filterByDate]);
 
@@ -362,7 +370,11 @@ export default function Dashboard() {
               refreshTrigger={refreshTrigger}
             />
             <ExpenseSummary expenses={expenses} />
-            <SuggestionsPanel suggestions={suggestions} />
+            <SuggestionsPanel 
+              suggestions={suggestions} 
+              onRefresh={() => fetchSuggestions(true)}
+              isLoading={loadingSuggestions}
+            />
           </div>
         </div>
       </div>

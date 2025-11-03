@@ -1,6 +1,6 @@
 'use client';
 
-import { Lightbulb, AlertTriangle, Info, TrendingUp } from 'lucide-react';
+import { Lightbulb, AlertTriangle, Info, TrendingUp, RefreshCw } from 'lucide-react';
 
 interface Suggestion {
   type: 'savings' | 'warning' | 'tip' | 'info';
@@ -12,9 +12,11 @@ interface Suggestion {
 
 interface SuggestionsPanelProps {
   suggestions: Suggestion[];
+  onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
-export default function SuggestionsPanel({ suggestions }: SuggestionsPanelProps) {
+export default function SuggestionsPanel({ suggestions, onRefresh, isLoading = false }: SuggestionsPanelProps) {
   const getIcon = (type: string) => {
     switch (type) {
       case 'savings':
@@ -42,7 +44,19 @@ export default function SuggestionsPanel({ suggestions }: SuggestionsPanelProps)
   if (suggestions.length === 0) {
     return (
       <div className="bg-slate-800 rounded-lg shadow-lg p-6 border border-slate-700">
-        <h2 className="text-lg font-semibold text-white mb-4">AI Suggestions</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-white">AI Suggestions</h2>
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              disabled={isLoading}
+              className="flex items-center space-x-1 text-slate-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Refresh suggestions"
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </button>
+          )}
+        </div>
         <div className="text-center py-8">
           <Lightbulb className="h-12 w-12 text-slate-400 mx-auto mb-4" />
           <p className="text-slate-400">No suggestions available</p>
@@ -54,7 +68,19 @@ export default function SuggestionsPanel({ suggestions }: SuggestionsPanelProps)
 
   return (
     <div className="bg-slate-800 rounded-lg shadow-lg p-6 border border-slate-700">
-      <h2 className="text-lg font-semibold text-white mb-4">AI Suggestions</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-white">AI Suggestions</h2>
+        {onRefresh && (
+          <button
+            onClick={onRefresh}
+            disabled={isLoading}
+            className="flex items-center space-x-1 text-slate-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Refresh suggestions"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </button>
+        )}
+      </div>
       
       <div className="space-y-4">
         {suggestions.map((suggestion, index) => (
