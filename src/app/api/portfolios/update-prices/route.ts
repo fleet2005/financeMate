@@ -40,8 +40,10 @@ export async function POST() {
           portfolio.totalGainLoss = Number(portfolio.totalValue) - totalCost;
           
           // Only calculate percentage if totalCost is not zero to avoid division by zero
+          // Cap percentage at 999.99 to fit within decimal(5,2) precision limit
           if (totalCost > 0) {
-            portfolio.gainLossPercentage = (Number(portfolio.totalGainLoss) / totalCost) * 100;
+            const calculatedPercentage = (Number(portfolio.totalGainLoss) / totalCost) * 100;
+            portfolio.gainLossPercentage = Math.max(-999.99, Math.min(999.99, calculatedPercentage));
           } else {
             portfolio.gainLossPercentage = 0;
           }

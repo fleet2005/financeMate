@@ -71,6 +71,26 @@ export async function PUT(
 
     // Update portfolio fields
     Object.assign(portfolio, validatedData);
+    
+    // Recalculate totalValue, totalGainLoss, and gainLossPercentage if quantity or averagePrice changed
+    // and currentPrice exists
+    if ((validatedData.quantity !== undefined || validatedData.averagePrice !== undefined) && 
+        portfolio.currentPrice !== null && portfolio.currentPrice !== undefined) {
+      portfolio.totalValue = Number(portfolio.quantity) * Number(portfolio.currentPrice);
+      
+      const totalCost = Number(portfolio.quantity) * Number(portfolio.averagePrice);
+      portfolio.totalGainLoss = Number(portfolio.totalValue) - totalCost;
+      
+      // Only calculate percentage if totalCost is not zero to avoid division by zero
+      // Cap percentage at 999.99 to fit within decimal(5,2) precision limit
+      if (totalCost > 0) {
+        const calculatedPercentage = (Number(portfolio.totalGainLoss) / totalCost) * 100;
+        portfolio.gainLossPercentage = Math.max(-999.99, Math.min(999.99, calculatedPercentage));
+      } else {
+        portfolio.gainLossPercentage = 0;
+      }
+    }
+    
     const updatedPortfolio = await portfolioRepository.save(portfolio);
 
     return NextResponse.json(updatedPortfolio);
