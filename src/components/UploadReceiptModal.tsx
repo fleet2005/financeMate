@@ -45,7 +45,9 @@ export default function UploadReceiptModal({ onClose, onCreated }: UploadReceipt
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data?.error || 'Failed to categorize receipt');
+        const errorMsg = data?.error || 'Failed to categorize receipt';
+        const details = data?.details ? `\n${data.details}` : '';
+        setError(`${errorMsg}${details}`);
         return;
       }
       onCreated(data.expense);
